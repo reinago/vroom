@@ -2,13 +2,15 @@
 
 #include "index.h"
 #include <condition_variable>
-#include <cpp11/data_frame.hpp>
 #include <mutex>
 #include <sstream>
 #include <string>
 #include <vector>
 
+#ifndef VROOM_STANDALONE
+#include <cpp11/data_frame.hpp>
 using namespace cpp11::literals;
+#endif
 
 class vroom_errors {
   struct parse_error {
@@ -69,6 +71,9 @@ public:
     }
   }
 
+  bool has_errors() const { return rows_.size() > 0; }
+
+#ifndef VROOM_STANDALONE
   cpp11::data_frame error_table() const {
     return cpp11::writable::data_frame(
         {"row"_nm = rows_,
@@ -77,8 +82,6 @@ public:
          "actual"_nm = actual_,
          "file"_nm = filenames_});
   }
-
-  bool has_errors() const { return rows_.size() > 0; }
 
   void warn_for_errors() const {
     if (!have_warned_ && rows_.size() > 0) {
@@ -94,6 +97,7 @@ public:
       Rf_eval(warn_call, R_EmptyEnv);
     }
   }
+#endif
 
   void clear() {
     std::lock_guard<std::mutex> guard(mutex_);

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <array>
-#include <cpp11/R.hpp>
 #include <cstring>
 #include <sstream>
 #include <string>

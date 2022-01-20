@@ -13,7 +13,12 @@
 // clang-format on
 
 #ifdef _WIN32
+#ifndef VROOM_STANDALONE
 #include <Rinternals.h>
+#else
+#define Rf_error printf
+#define R_alloc calloc
+#endif
 #include <windows.h>
 #endif
 
